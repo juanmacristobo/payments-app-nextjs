@@ -4,37 +4,41 @@ Módulo de pagos de un marketplace de música física. Esta aplicación gestiona
 
 Forma parte de un ecosistema compuesto por cuatro aplicaciones independientes que se comunican mediante APIs.
 
-## Rol dentro del sistema
+**Deploy:** **[Payments App - Groovy Music Store](https://proyecto-c-payments-groovy-music-st.vercel.app/)**
 
-La **Payments App** es responsable del dominio de pagos y se integra con:
+## Mi Rol y Desarrollo
 
-* **Buyer App:** inicia los pagos y consulta el estado de las transacciones.
-* **Seller App:** consulta balances y fondos acreditados.
-* **Shipping App:** confirma la entrega para liberar los fondos al vendedor.
-* **Control Plane:** permite administrar reembolsos, liberaciones y consultar métricas.
+Fui responsable del diseño, implementación y despliegue de extremo a extremo de esta **Payments App**. Mi objetivo fue desarrollar el módulo encargado de gestionar el dominio de pagos y su integración con el resto de las aplicaciones del sistema:
 
-## Stack
+* **Procesamiento de Pagos:** integración con **Mercado Pago Checkout Pro** para iniciar y gestionar el flujo de pagos mediante el entorno Sandbox.
+* **Gestión de Transacciones:** implementación de la lógica para registrar pagos, consultar su estado y administrar el ciclo de vida de las transacciones.
+* **Acreditación de Fondos:** gestión de los fondos correspondientes a los vendedores, incluyendo la liberación posterior a la confirmación de entrega.
+* **Reembolsos y Reclamos:** implementación de funcionalidades para gestionar reembolsos y administrar información relacionada con reclamos.
+* **Integración entre Servicios:** comunicación mediante APIs REST con las aplicaciones **Buyer, Seller, Shipping, Control Plane y Analytics**.
+* **Webhook de Mercado Pago:** recepción y procesamiento de notificaciones relacionadas con los pagos.
+* **Panel de Administración:** desarrollo de un panel propio para la gestión y consulta de información del módulo de pagos.
 
-**Next.js (App Router, TypeScript)** · **Prisma 6** · **PostgreSQL (Neon)** · **Clerk** · **Mercado Pago Checkout Pro (Sandbox)** · **Tailwind CSS** · **Vercel**
+## Stack Tecnológico
 
-## Deploy
-
-* **Payments App:** https://proyecto-c-payments-groovy-music-st.vercel.app/
-* **Buyer App:** https://proyecto-c-buyer2-groovy-music-store.vercel.app/
-
-El flujo de pago se inicia desde la **Buyer App** y continúa en el checkout de Mercado Pago utilizando el entorno Sandbox.
+* **Framework:** Next.js (App Router)
+* **Lenguaje:** TypeScript
+* **Estilos:** Tailwind CSS
+* **Base de Datos:** PostgreSQL (Neon)
+* **ORM:** Prisma 6
+* **Autenticación:** Clerk
+* **Pagos:** Mercado Pago Checkout Pro (Sandbox)
+* **Despliegue:** Vercel
 
 ## Cómo probar
 
-1. Ingresar a la **Buyer App**.
-2. Seleccionar un producto y comenzar el proceso de compra.
-3. Desde la Buyer App se inicia el checkout de Mercado Pago.
-4. Completar el pago utilizando las credenciales de prueba del entorno Sandbox.
-5. Volver a la aplicación y consultar el estado de la transacción.
+El flujo de pago se inicia desde la **Buyer App** y continúa en el checkout de Mercado Pago utilizando el entorno Sandbox.
+
+**Buyer App:** **[Buyer App - Groovy Music Store](https://proyecto-c-buyer2-groovy-music-store.vercel.app/)**
 
 ### Acceso al panel de administración
 
 <details>
+  
 <summary>Credenciales de prueba</summary>
 
 Usuario: `adminpayments`
@@ -45,6 +49,7 @@ Contraseña: `adminpayments`
 ### Datos de prueba de Mercado Pago
 
 <details>
+  
 <summary>Credenciales del comprador y tarjeta de prueba</summary>
 
 **Comprador de test**
@@ -66,49 +71,13 @@ Código: `965242`
 ## Endpoints
 
 <details>
-<summary>Endpoints consumidos por otras aplicaciones</summary>
+  
+<summary>Endpoints de la aplicación</summary>
 
-### Buyer App
-
-| Método y ruta                 | Para qué                                                  |
-| ----------------------------- | --------------------------------------------------------- |
-| `POST /api/payments/checkout` | Inicia el pago y devuelve el `init_point` de Mercado Pago |
-| `GET /api/payments/:id`       | Consulta el estado de una transacción                     |
-
-### Shipping App
-
-| Método y ruta                              | Para qué                                            |
-| ------------------------------------------ | --------------------------------------------------- |
-| `POST /api/payments/delivery-confirmation` | Confirma la entrega y libera los fondos al vendedor |
-
-### Seller App
-
-| Método y ruta                   | Para qué                                                 |
-| ------------------------------- | -------------------------------------------------------- |
-| `GET /api/payouts?sellerId=:id` | Consulta el balance retenido y acreditado de un vendedor |
+La aplicación expone endpoints REST consumidos por las distintas aplicaciones del ecosistema y endpoints internos utilizados para la integración con Mercado Pago.
 
 </details>
 
-<details>
-<summary>Endpoints consumidos por el Control Plane</summary>
+## Configuración local
 
-| Método y ruta                              | Para qué                                     |
-| ------------------------------------------ | -------------------------------------------- |
-| `POST /api/payments/:id/refund`            | Gestiona reembolsos totales o parciales      |
-| `POST /api/payments/:id/release`           | Libera fondos manualmente                    |
-| `GET /api/payouts`                         | Lista los balances de los vendedores         |
-| `GET /api/analytics/reclamos`              | Consulta métricas de reclamos                |
-| `GET /api/analytics/resumen`               | Consulta un resumen general de transacciones |
-| `GET /api/analytics/transacciones-por-dia` | Obtiene la serie de transacciones por día    |
-
-</details>
-
-<details>
-<summary>Endpoint interno</summary>
-
-| Método y ruta                | Para qué                                  |
-| ---------------------------- | ----------------------------------------- |
-| `POST /api/payments/webhook` | Recibe las notificaciones de Mercado Pago |
-
-</details>
-
+El repositorio incluye un `.env.example` con las variables necesarias para configurar Clerk, PostgreSQL, Mercado Pago y la URL de la aplicación.
